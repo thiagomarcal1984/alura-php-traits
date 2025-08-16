@@ -67,3 +67,22 @@ abstract class Titulo
 ```
 > 1. Classes abstratas **podem** ter métodos abstratos (não é obrigatório ter métodos abstratos);
 > 2. Classes abstratas **não** podem ser instanciadas.
+
+# De notas para estrelas
+## Modelando Episódio
+Um episódio não pode ser modelado como uma subclasse de `Titulo`.
+
+Vamos criar o modelo da classe `Episodio` da seguinte forma (apenas o construtor com propriedades `public readonly`):
+```PHP
+<?php
+
+class Episodio
+{
+    public function __construct(
+        public readonly Serie $serie,
+        public readonly string $nome,
+        public readonly int $numero,
+    ) {
+    }
+}
+```
