@@ -101,3 +101,84 @@ class ConversorNotaEstrela
 }
 ```
 `Avaliavel` será uma interface a ser definida e implementada nas próximas aulas.
+
+## Extraindo uma interface
+Definição da interface `Avaliavel`:
+```PHP
+<?php
+
+interface Avaliavel
+{
+    public function avalia(float $nota): void;
+    public function media(): float;
+}
+```
+
+Considere onde implementar uma interface: se todas as subclasses da classe abstrata devem implementar a interface, então "implemente" a interface com o método abstrato.
+
+Veja como vai ficar a classe `Titulo`:
+```PHP
+<?php
+
+abstract class Titulo implements Avaliavel
+{
+    // Resto do código
+}
+```
+
+Agora a implementação concreta da interface na classe `Episodio` (as classes `Serie` e `Filme` não precisaram de mudanças):
+```PHP
+<?php
+
+class Episodio implements Avaliavel
+{
+    private array $notas;
+    
+    public function __construct(
+        // Resto do código
+    ) {
+        $this->notas = [];
+    }
+
+    public function avalia(float $nota): void
+    {
+        $this->notas[] = $nota;
+    }
+
+    public function media(): float
+    {
+        $somaNotas = array_sum($this->notas);
+        $quantidadeNotas = count($this->notas);
+        return $quantidadeNotas > 0 ? $somaNotas / $quantidadeNotas : 0.0;
+    }
+}
+```
+
+Cuidado com a ordem dos imports! Em `index.php`, as interfaces devem ser importadas **antes** das classes que as implementam!
+
+```PHP
+// index.php
+<?php
+
+require __DIR__ . "/src/Modelo/Genero.php";
+
+// Importe a interface antes das classes que a implementam!
+require __DIR__ . "/src/Modelo/Avaliavel.php"; 
+
+require __DIR__ . "/src/Modelo/Titulo.php";
+// Resto do código
+require __DIR__ . "/src/Calculos/ConversorNotaEstrela.php";
+
+// Resto do código
+$filme->avalia(10);
+$filme->avalia(10);
+$filme->avalia(5);
+$filme->avalia(5);
+
+$serie->avalia(8);
+
+// Resto do código
+$conversor = new ConversorNotaEstrela($serie);
+echo "Nota em estrelas: " . $conversor->converte($serie) . "\n";
+echo "Nota em estrelas: " . $conversor->converte($filme) . "\n";
+```

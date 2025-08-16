@@ -1,6 +1,6 @@
 <?php
 
-abstract class Titulo
+abstract class Titulo implements Avaliavel
 {
     private array $notas;
 
