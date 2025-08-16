@@ -1,6 +1,6 @@
 <?php
 
-class Titulo
+abstract class Titulo
 {
     private array $notas;
 

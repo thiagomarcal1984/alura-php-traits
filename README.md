@@ -52,3 +52,18 @@ class Serie extends Titulo
     }
 }
 ```
+## Nova abstração
+Não há concretamente um Título: ele sempre é concretizado em outros modelos (Série e Filme). Assim como não há concretamente uma Conta: ela sempre é concretizada em tipos específicos de conta (Corrente, Poupança, Investimento etc.).
+
+```PHP
+// src/Modelo/Titulo.php
+<?php
+
+abstract class Titulo
+{
+    // Resto do código
+    abstract public function duracaoEmMinutos(): int;
+}
+```
+> 1. Classes abstratas **podem** ter métodos abstratos (não é obrigatório ter métodos abstratos);
+> 2. Classes abstratas **não** podem ser instanciadas.
