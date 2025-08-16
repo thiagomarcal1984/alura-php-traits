@@ -86,3 +86,18 @@ class Episodio
     }
 }
 ```
+## Conversor em estrelas
+Vamos criar um conversor de notas em estrelas (transformar uma nota de 0 a 10 em um pontuação de 1 a 5), conforme a classe abaixo:
+```PHP
+<?php
+
+class ConversorNotaEstrela 
+{
+    public static function converte(Avaliavel $avaliavel): float
+    {
+        $nota = $avaliavel->media();
+        return round($nota) / 2;
+    }
+}
+```
+`Avaliavel` será uma interface a ser definida e implementada nas próximas aulas.
