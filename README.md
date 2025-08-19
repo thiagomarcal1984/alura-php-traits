@@ -307,3 +307,40 @@ use ScreenMatch\Calculos\ConversorNotaEstrela;
 // Resto do código
 ```
 > Note que, para importar várias classes de um mesmo namespace, basta informar o namespace e em seguida, entre chaves, informar as classes que você quer importar desse namespace.
+## Autoload
+SPL = Standard PHP Library = Biblioteca Padrão do PHP.
+A função `spl_autoload_register` coloca um código para autoload na aplicação.
+
+Ela está descrita no novo arquivo a seguir:
+
+```PHP
+// autoload.php
+<?php
+spl_autoload_register(function (string $classe) {
+    $caminho = str_replace('ScreenMatch', 'src', $classe) . '.php';
+    $caminho = str_replace('\\', DIRECTORY_SEPARATOR, $caminho);
+
+    $caminhoCompleto = __DIR__ . DIRECTORY_SEPARATOR . $caminho;
+
+    if (file_exists($caminhoCompleto)) {
+        require_once $caminhoCompleto;
+    }
+});
+```
+O algoritmo consiste em:
+1. pegar o nome da classe;
+2. substituir o primeiro nome do namespace e substituir por `src`;
+3. sufixar com `.php`; e
+4. fazer o carregamento com `require_once`.
+
+> Há também alguns códigos para substituir as barras e contra-barras pela constante `DIRECTORY_SEPARATOR`. Também há um código para testar se o caminho existe - afinal, o autoload **NUNCA** pode falhar.
+
+É fácil obter esse código via IA ou na internet.
+
+Para usar o autoload, basta inserir o seguinte código na página PHP inicial:
+```PHP
+// index.php
+<?php
+require_once 'autoload.php';
+// Resto do código
+```
