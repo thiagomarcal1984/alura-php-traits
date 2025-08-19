@@ -182,3 +182,85 @@ $conversor = new ConversorNotaEstrela($serie);
 echo "Nota em estrelas: " . $conversor->converte($serie) . "\n";
 echo "Nota em estrelas: " . $conversor->converte($filme) . "\n";
 ```
+# Mais organização
+## Traits
+Traits são um mecanismo para reutilizar código sem duplicação. Elas permitem uma espécie de "herança horizontal".
+
+Trait não é um tipo: é um código para reúso. Ela não pode servir como retorno de um método, por exemplo.
+
+Vamos criar a trait `ComAvaliacao`:
+```PHP
+// src/Modelo/ComAvaliacao.php
+<?php
+
+trait ComAvaliacao
+{
+    private array $notas = [];
+
+    public function avalia(float $nota): void
+    {
+        $this->notas[] = $nota;
+    }
+
+    public function media(): float
+    {
+        if (count($this->notas) === 0) {
+            return 0.0;
+        }
+        return array_sum($this->notas) / count($this->notas);
+    }
+}
+```
+
+O uso da trait é simples: basta inserir na classe o comando `use ComAvaliacao`:
+```PHP
+// src/Modelo/Titulo.php
+<?php
+
+abstract class Titulo implements Avaliavel
+{
+    use ComAvaliacao;
+    
+    public function __construct(
+        public readonly string $nome,
+        public readonly int $anoLancamento,
+        public readonly Genero $genero,
+    ) {
+    }
+
+    abstract public function duracaoEmMinutos(): int;
+}
+```
+
+> As classes `Filme` e `Serie` não precisam do comando `use ComAvaliacao`, já que elas herdam de `Titulo`.
+
+```PHP
+// src/Modelo/Episodio.php
+<?php
+
+class Episodio implements Avaliavel
+{
+    use ComAvaliacao;
+    
+    public function __construct(
+        public readonly Serie $serie,
+        public readonly string $nome,
+        public readonly int $numero,
+    ) {
+    }
+}
+```
+> Como a classe `Episodio` não herda de `Titulo`, é necessário inserir o comando para usar a trait.
+
+Finalmente, é necessário importar a trait `ComAvaliacao` **antes** das classes que a utilizam:
+
+```PHP
+// index.php
+<?php
+
+require __DIR__ . "/src/Modelo/Genero.php";
+require __DIR__ . "/src/Modelo/ComAvaliacao.php"; // Aqui está a trait.
+require __DIR__ . "/src/Modelo/Avaliavel.php";
+require __DIR__ . "/src/Modelo/Titulo.php";
+// Resto do código
+```
