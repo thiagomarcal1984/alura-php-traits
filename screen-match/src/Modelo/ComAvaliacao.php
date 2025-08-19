@@ -1,4 +1,5 @@
 <?php
+namespace ScreenMatch\Modelo;
 
 trait ComAvaliacao
 {

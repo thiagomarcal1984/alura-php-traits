@@ -264,3 +264,46 @@ require __DIR__ . "/src/Modelo/Avaliavel.php";
 require __DIR__ . "/src/Modelo/Titulo.php";
 // Resto do código
 ```
+## Namespaces
+Namespaces são como diretórios lógicos. A distribuição dos arquivos no sistema de arquivos não precisa ser idêntica à dos namespaces.
+
+Para cada diretório dentro de `src` vamos criar um namespace com o padrão `namespace ScreenMatch\{Nome do diretório}`:
+```PHP
+// src/Modelo/Titulo.php
+<?php
+namespace ScreenMatch\Modelo;
+
+abstract class Titulo implements Avaliavel
+{
+    // Resto do código
+}
+
+// src/Calculos/ConversorNotaEstrela.php
+<?php
+namespace ScreenMatch\Calculos;
+
+class ConversorNotaEstrela 
+{
+    // Resto do código
+}
+```
+
+Dentro de `index.php` o uso dos namespaces (e de várias classes do namespace) pode ser feito da seguinte forma:
+
+```PHP
+// index.php
+<?php
+use ScreenMatch\Modelo\{
+    Genero, Episodio, Serie, Filme
+};
+
+// use ScreenMatch\Calculos\{
+//     CalculadoraDeMaratona, ConversorNotaEstrela
+// };
+
+use ScreenMatch\Calculos\CalculadoraDeMaratona;
+use ScreenMatch\Calculos\ConversorNotaEstrela;
+
+// Resto do código
+```
+> Note que, para importar várias classes de um mesmo namespace, basta informar o namespace e em seguida, entre chaves, informar as classes que você quer importar desse namespace.
