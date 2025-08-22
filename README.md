@@ -344,3 +344,70 @@ Para usar o autoload, basta inserir o seguinte código na página PHP inicial:
 require_once 'autoload.php';
 // Resto do código
 ```
+# Lidando com falta de notas
+## Média sem avaliações / Tratamento de exceções
+Exceção x Erro: Exceção permite mudança no fluxo do programa; Erro impede a continuação do fluxo do programa.
+
+Vamos criar um arquivo chamado `erro.php` para testar as exceções:
+
+```PHP
+// erro.php
+<?php
+
+use ScreenMatch\Calculos\ConversorNotaEstrela;
+use ScreenMatch\Modelo\Episodio;
+use ScreenMatch\Modelo\Genero;
+use ScreenMatch\Modelo\Serie;
+
+require 'autoload.php';
+
+$serie = new Serie('Nome da série', 2024, Genero::Acao, 7, 20, 30);
+$episodio = new Episodio($serie, 'Piloto', 1);
+$episodio->avalia(10);
+
+$conversor = new ConversorNotaEstrela();
+
+echo $conversor->converte($episodio);
+```
+
+E vamos mudar o método `converte` que é invocado do objeto `ConversorNotaEstrela`:
+```PHP
+// src/Calculos/ConversorNotaEstrela.php
+<?php
+namespace ScreenMatch\Calculos;
+
+class ConversorNotaEstrela 
+{
+    public static function converte(\ScreenMatch\Modelo\Avaliavel $avaliavel): float
+    {
+        try {
+            $nota = $avaliavel->media();
+            return round($nota) / 2;
+        } catch (\DivisionByZeroError) { 
+            // O PHP não força a declaração da variável $erro.
+            return 0.0;
+        }
+    }
+}
+```
+Note que a função chama objetos que implementam a interface `Avaliavel`. A superclasse `Titulo` usa a trait `ComAvaliacao`, a qual contém a implementação do método `media` abrangido pelo try/catch do método `converte` de `ConversorNotaEstrela`.
+
+A implementação antiga já retornava zero para evitar este erro. Então mudamos a implementação da trait `ComAvaliacao::media` apenas para exemplificar o uso do try/catch:
+```PHP
+// src/Modelo/ComAvaliacao.php
+<?php
+namespace ScreenMatch\Modelo;
+
+trait ComAvaliacao
+{
+    // Resto do código
+
+    public function media(): float
+    {
+        // if (count($this->notas) === 0) {
+        //     return 0.0;
+        // }
+        return array_sum($this->notas) / count($this->notas);
+    }
+}
+```

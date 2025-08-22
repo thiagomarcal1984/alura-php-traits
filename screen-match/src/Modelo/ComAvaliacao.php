@@ -12,9 +12,9 @@ trait ComAvaliacao
 
     public function media(): float
     {
-        if (count($this->notas) === 0) {
-            return 0.0;
-        }
+        // if (count($this->notas) === 0) {
+        //     return 0.0;
+        // }
         return array_sum($this->notas) / count($this->notas);
     }
 }
