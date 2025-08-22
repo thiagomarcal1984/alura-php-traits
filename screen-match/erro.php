@@ -1,6 +1,7 @@
 <?php
 
 use ScreenMatch\Calculos\ConversorNotaEstrela;
+use ScreenMatch\Exception\NotaInvalidaException;
 use ScreenMatch\Modelo\Episodio;
 use ScreenMatch\Modelo\Genero;
 use ScreenMatch\Modelo\Serie;
@@ -16,6 +17,6 @@ try {
     $conversor = new ConversorNotaEstrela();
     
     echo $conversor->converte($episodio);
-} catch (Exception $e) {
+} catch (NotaInvalidaException $e) {
     echo 'Um problema aconteceu: ' . $e->getMessage();
 }

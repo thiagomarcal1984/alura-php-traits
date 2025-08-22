@@ -509,3 +509,73 @@ try {
     echo 'Um problema aconteceu: ' . $e->getMessage();
 }
 ```
+## Criando nossa exceção
+Código da nova exceção `NotaInvalidaException`:
+```PHP
+// src/Exception/NotaInvalidaException.php
+<?php
+namespace ScreenMatch\Exception;
+
+class NotaInvalidaException extends \InvalidArgumentException
+{
+    // Podemos manter a classe vazia, pois ela herda de InvalidArgumentException.
+    public function __construct()
+    {
+        parent::__construct("A nota precisa estar entre 0 e 10.");
+    }
+}
+```
+
+Agora vamos mudar o código da trait `ComAvaliacao` para lançar a nova exceção: 
+```PHP
+<?php
+// src/Modelo/ComAvaliacao.php
+namespace ScreenMatch\Modelo;
+
+use ScreenMatch\Exception\NotaInvalidaException;
+
+trait ComAvaliacao
+{
+    private array $notas = [];
+
+    /**
+     * @throws NotaInvalidaException Se a nota for negativa ou maior que 10.
+     */
+    public function avalia(float $nota): void
+    {
+        if ($nota < 0 || $nota > 10) {
+            throw new NotaInvalidaException('A nota deve estar entre 0 e 10.');
+        }   
+        $this->notas[] = $nota;
+    }
+
+    // Resto do código
+}
+```
+
+Finalmente, vamos testar o lançamento do erro no arquivo `erro.php`:
+```PHP
+// erro.php
+<?php
+
+use ScreenMatch\Calculos\ConversorNotaEstrela;
+use ScreenMatch\Exception\NotaInvalidaException;
+use ScreenMatch\Modelo\Episodio;
+use ScreenMatch\Modelo\Genero;
+use ScreenMatch\Modelo\Serie;
+
+require 'autoload.php';
+
+$serie = new Serie('Nome da série', 2024, Genero::Acao, 7, 20, 30);
+$episodio = new Episodio($serie, 'Piloto', 1);
+try {
+    $episodio->avalia(45);
+    $episodio->avalia(-35);
+    
+    $conversor = new ConversorNotaEstrela();
+    
+    echo $conversor->converte($episodio);
+} catch (NotaInvalidaException $e) {
+    echo 'Um problema aconteceu: ' . $e->getMessage();
+}
+```
