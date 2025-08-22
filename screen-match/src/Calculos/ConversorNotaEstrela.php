@@ -8,7 +8,7 @@ class ConversorNotaEstrela
         try {
             $nota = $avaliavel->media();
             return round($nota) / 2;
-        } catch (\DivisionByZeroError) { 
+        } catch (\Throwable) { 
             // O PHP não força a declaração da variável $erro.
             return 0.0;
         }

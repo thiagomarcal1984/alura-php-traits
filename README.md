@@ -346,7 +346,7 @@ require_once 'autoload.php';
 ```
 # Lidando com falta de notas
 ## Média sem avaliações / Tratamento de exceções
-Exceção x Erro: Exceção permite mudança no fluxo do programa; Erro impede a continuação do fluxo do programa.
+Exceção x Erro: Exceção permite mudança no fluxo do programa; Erro (em versões anteriores à 7 do PHP) impede a continuação do fluxo do programa.
 
 Vamos criar um arquivo chamado `erro.php` para testar as exceções:
 
@@ -411,3 +411,47 @@ trait ComAvaliacao
     }
 }
 ```
+## Lidando com múltiplos tipos
+Caso o tratamento seja igual para várias exceções/erros, você pode encadear essas exceções/erros com pipe:
+```PHP
+try {
+    $nota = $avaliavel->media();
+    return round($nota) / 2;
+} catch (\DivisionByZeroError | \ArgumentCountError) { 
+    return 0.0;
+}
+```
+
+Se o tratamento for diferente para cada throwable (erro/exceção), crie blocos separados:
+
+```PHP
+try {
+    $nota = $avaliavel->media();
+    return round($nota) / 2;
+} catch (\DivisionByZeroError ) { 
+    return 0.0;
+} catch (\ArgumentCountError $e) { 
+    echo e->getMessage() . '\n';
+    return -1.0;
+}
+```
+> Apenas por curiosidade, as classes `Error` e `Exception` implementam a interface `Throwable`. Então, podemos fazer um try/catch completamente amplo capturando qualquer implementação de `Throwable`:
+> ```PHP
+> <?php
+> // src/Calculos/ConversorNotaEstrela.php
+> namespace ScreenMatch\Calculos;
+> 
+> class ConversorNotaEstrela 
+> {
+>     public static function converte(\ScreenMatch\Modelo\Avaliavel $avaliavel): float
+>     {
+>         try {
+>             $nota = $avaliavel->media();
+>             return round($nota) / 2;
+>         } catch (\Throwable) { 
+>             // O PHP não força a declaração da variável $erro.
+>             return 0.0;
+>         }
+>     }
+> }
+> ```
